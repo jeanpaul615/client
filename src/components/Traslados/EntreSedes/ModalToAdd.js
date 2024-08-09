@@ -19,7 +19,8 @@ const ModaltoAdd = ({ isOpen, onClose }) => {
   useEffect(() => {
     const fetchMaterials = async () => {
       const mats = await getMaterials();
-      setMaterials(mats || []);
+      const filteredMats = mats.filter(material => material.Cantidad > 0);
+      setMaterials(filteredMats || []);
     };
 
     fetchMaterials();

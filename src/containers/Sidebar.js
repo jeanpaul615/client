@@ -73,12 +73,12 @@ function Sidebar() {
         } sm:translate-x-0`}
         aria-label="Sidebar"
       >
-        <div className="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-slate-800">
+        <div className="h-full px-3 py-4 overflow-y-auto bg-slate-800">
           <ul className="space-y-2 font-medium">
             <li>
               <a
                 href="/agregarinventario"
-                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                className="flex items-center p-2 rounded-lg text-white hover:bg-gray-700 group"
               >
                 <svg
                   className="pr-2 h-5 w-6"
@@ -98,7 +98,7 @@ function Sidebar() {
             <li>
               <a
                 href="/datatablestock"
-                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                className="flex items-center p-2 rounded-lg text-white hover:bg-gray-700 group"
               >
                 <svg
                   className="w-4 h-5"
@@ -116,7 +116,7 @@ function Sidebar() {
             <li onClick={toggleTransfer}>
               <a
                 href="/"
-                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                className="flex items-center p-2 rounded-lg text-white hover:bg-gray-700 group"
               >
                 <svg
                   className="w-4 h-5"
@@ -141,7 +141,7 @@ function Sidebar() {
                 <li>
                   <a
                     href="/tecnicoacontrato"
-                    className="flex items-center p-2 text-gray-900 rounded-lg italic dark:text-white hover:bg-gray-100 hover:text-black bg-gray-700 group"
+                    className="flex items-center p-2 rounded-lg italic text-white hover:bg-gray-100 hover:text-black bg-gray-700 group"
                   >
                     Tecnico a Contrato
                   </a>
@@ -149,7 +149,7 @@ function Sidebar() {
                 <li>
                   <a
                     href="/tecnicoasistema"
-                    className="flex items-center p-2 text-gray-900 rounded-lg italic dark:text-white hover:bg-gray-100 hover:text-black bg-gray-700 group"
+                    className="flex items-center p-2  rounded-lg italic text-white hover:bg-gray-100 hover:text-black bg-gray-700 group"
                   >
                     Tecnico a Sistema
                   </a>
@@ -157,7 +157,7 @@ function Sidebar() {
                 <li>
                   <a
                     href="/entresedes"
-                    className="flex items-center p-2 text-gray-900 rounded-lg italic dark:text-white hover:bg-gray-100 hover:text-black bg-gray-700 group"
+                    className="flex items-center p-2 rounded-lg italic text-white hover:bg-gray-100 hover:text-black bg-gray-700 group"
                   >
                     Prestamo Entre Sedes
                   </a>
@@ -167,7 +167,7 @@ function Sidebar() {
             <li>
               <a
                 href="/datatabletechnical"
-                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                className="flex items-center p-2 rounded-lg text-white hover:bg-gray-700 group"
               >
                 <svg
                   className="w-4 h-5"
@@ -187,7 +187,7 @@ function Sidebar() {
             <li>
               <a
                 href="/devoluciones"
-                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                className="flex items-center p-2 rounded-lg text-white hover:bg-gray-700 group"
               >
                 <svg
                   className="h-4 w-5"
@@ -207,7 +207,7 @@ function Sidebar() {
             <li>
               <a
                 href="/datatabletechniques"
-                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                className="flex items-center p-2 rounded-lg text-white hover:bg-gray-700 group"
               >
                 <svg
                   className="h-4 w-5"
@@ -227,7 +227,7 @@ function Sidebar() {
             <li>
               <a
                 href="/factura"
-                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                className="flex items-center p-2 rounded-lg dark:text-white hover:bg-gray-700 group"
               >
                 <svg 
                 className="h-4 w-5"
@@ -244,7 +244,7 @@ function Sidebar() {
               <a
                 href="/"
                 onClick={handleLogout}
-                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                className="flex items-center p-2 rounded-lg text-white hover:bg-gray-700 group"
               >
                 <svg
                   className="h-4 w-5"
@@ -263,7 +263,7 @@ function Sidebar() {
             </li>
           </ul>
           <div
-            className="relative h-64 w-full mb-24 px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-slate-800"
+            className="relative h-64 w-full mb-24 px-3 py-4 overflow-y-auto bg-slate-800"
             style={{
               backgroundImage: `url(${leon_legon})`,
               backgroundSize: "contain",
