@@ -1,41 +1,67 @@
 import React, { useState, useEffect } from "react";
 import { SaveStockTecnico } from "../../controllers/StockTechnique/SaveStockTecnico";
-import { getTechnicians, getMaterials, getStockByMaterial } from "../../controllers/StockTechnique/addStock"; // Ajusta la ruta según sea necesario
+import { getTechnicians, getMaterials, getStockByMaterial } from "../../controllers/StockTechnique/addStock";
+
 const ModaltoAdd = ({ isOpen, onClose }) => {
   const [materialData, setMaterialData] = useState({
     Nombre_material: "",
     Nombre: "",
     Stock: 0,
-    Cantidad: 0
+    Cantidad: 0,
+    Id_stocksistema: null
   });
 
   const [technicians, setTechnicians] = useState([]);
   const [materials, setMaterials] = useState([]);
   const [filteredTechnicians, setFilteredTechnicians] = useState([]);
   const [filteredMaterials, setFilteredMaterials] = useState([]);
+  const [isMaterialValid, setIsMaterialValid] = useState(false);
+  const [isTechnicianValid, setIsTechnicianValid] = useState(false);
 
   useEffect(() => {
     const fetchTechniciansAndMaterials = async () => {
-      const techs = await getTechnicians();
-      const filteredTechs = techs.filter(tech => tech.Estado === 1); // Filtrar técnicos activos
-      setTechnicians(filteredTechs || []);
-      const mats = await getMaterials();
-      const filteredMats = mats.filter(mats => mats.Cantidad >= 1); // Filtrar materiales que su cantidad es mayor a 0
-      setMaterials(filteredMats || []);
+      try {
+        const techs = await getTechnicians();
+        const filteredTechs = techs.filter(tech => tech.Estado === 1); // Filtrar técnicos activos
+        setTechnicians(filteredTechs || []);
+
+        const mats = await getMaterials();
+        const filteredMats = mats.filter(mats => mats.Cantidad >= 1); // Filtrar materiales con cantidad mayor a 0
+        setMaterials(filteredMats || []);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
     };
 
     fetchTechniciansAndMaterials();
   }, []);
 
+  useEffect(() => {
+    const validateMaterial = () => {
+      setIsMaterialValid(materials.some(material => material.Nombre_material.toLowerCase() === materialData.Nombre_material.toLowerCase()));
+    };
+
+    const validateTechnician = () => {
+      setIsTechnicianValid(technicians.some(technician => technician.Nombre.toLowerCase() === materialData.Nombre.toLowerCase()));
+    };
+
+    validateMaterial();
+    validateTechnician();
+  }, [materialData.Nombre_material, materialData.Nombre, materials, technicians]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const { Nombre_material, Cantidad, Nombre } = materialData;
-      const response = await SaveStockTecnico(materialData.Id_stocksistema, Nombre_material, Cantidad, Nombre);
-      console.log("Operación exitosa:", response);
-      onClose(); // Cierra el modal después de agregar y eliminar
-    } catch (error) {
-      console.error("Error al realizar la operación:", error);
+    if (isMaterialValid && isTechnicianValid) {
+      try {
+        const { Nombre_material, Cantidad, Nombre, Id_stocksistema } = materialData;
+        const response = await SaveStockTecnico(Id_stocksistema, Nombre_material, Cantidad, Nombre);
+        console.log("Operación exitosa:", response);
+        onClose(); // Cierra el modal después de agregar
+      } catch (error) {
+        console.error("Error al realizar la operación:", error);
+      }
+    } else {
+      console.error("Material o técnico no válido. Asegúrese de seleccionar un material y técnico autocompletado.");
     }
   };
 
@@ -46,26 +72,24 @@ const ModaltoAdd = ({ isOpen, onClose }) => {
       [name]: value
     });
 
-    if (name === "Nombre_material" && value.trim().length > 0) {
-      setFilteredMaterials(
-        materials.filter((material) =>
+    if (name === "Nombre_material") {
+      if (value.trim().length > 0) {
+        const filtered = materials.filter((material) =>
           material.Nombre_material.toLowerCase().includes(value.toLowerCase())
-        )
-      );
-    } else {
-      // Reset filtered materials if value is empty
-      setFilteredMaterials([]);
-    }
-
-    if (name === "Nombre" && value.trim().length > 0) {
-      setFilteredTechnicians(
-        technicians.filter((technician) =>
+        );
+        setFilteredMaterials(filtered);
+      } else {
+        setFilteredMaterials([]);
+      }
+    } else if (name === "Nombre") {
+      if (value.trim().length > 0) {
+        const filtered = technicians.filter((technician) =>
           technician.Nombre.toLowerCase().includes(value.toLowerCase())
-        )
-      );
-    } else {
-      // Reset filtered technicians if value is empty
-      setFilteredTechnicians([]);
+        );
+        setFilteredTechnicians(filtered);
+      } else {
+        setFilteredTechnicians([]);
+      }
     }
   };
 
@@ -118,11 +142,11 @@ const ModaltoAdd = ({ isOpen, onClose }) => {
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
-            {filteredMaterials && filteredMaterials.length > 0 && (
+            {filteredMaterials.length > 0 && (
               <ul className="mt-2 border border-gray-300 rounded-lg bg-white max-h-40 overflow-y-auto">
                 {filteredMaterials.map((material) => (
                   <li
-                    key={material.id}
+                    key={material.Id_stocksistema}
                     onClick={() => handleMaterialClick(material)}
                     className="cursor-pointer px-3 py-2 hover:bg-gray-200"
                   >
@@ -142,11 +166,11 @@ const ModaltoAdd = ({ isOpen, onClose }) => {
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
-            {filteredTechnicians && filteredTechnicians.length > 0 && (
+            {filteredTechnicians.length > 0 && (
               <ul className="mt-2 border border-gray-300 rounded-lg bg-white max-h-40 overflow-y-auto">
                 {filteredTechnicians.map((technician) => (
                   <li
-                    key={technician.id}
+                    key={technician.Id_tecnico}
                     onClick={() => handleTechnicianClick(technician)}
                     className="cursor-pointer px-3 py-2 hover:bg-gray-200"
                   >
@@ -162,7 +186,6 @@ const ModaltoAdd = ({ isOpen, onClose }) => {
               type="number"
               name="Stock"
               value={materialData.Stock}
-              onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
               readOnly
@@ -189,7 +212,8 @@ const ModaltoAdd = ({ isOpen, onClose }) => {
             </button>
             <button
               type="submit"
-              className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className={`bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 ${!(isMaterialValid && isTechnicianValid) ? 'opacity-50 cursor-not-allowed' : ''}`}
+              disabled={!(isMaterialValid && isTechnicianValid)}
             >
               Agregar
             </button>

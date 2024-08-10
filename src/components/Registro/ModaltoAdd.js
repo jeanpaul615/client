@@ -12,25 +12,30 @@ const ModaltoAdd = ({ isOpen, onClose }) => {
 
   const [materials, setMaterials] = useState([]);
   const [filteredMaterials, setFilteredMaterials] = useState([]);
+  const [isMaterialValid, setIsMaterialValid] = useState(false);
 
   useEffect(() => {
-    const fetchTechniciansAndMaterials = async () => {
+    const fetchMaterials = async () => {
       const mats = await getMaterials();
       setMaterials(mats || []);
     };
 
-    fetchTechniciansAndMaterials();
+    fetchMaterials();
   }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const { Nombre_material, Cantidad, Estado } = materialData;
-      const response = await AddDevolucion(Nombre_material, Cantidad, Estado);
-      console.log("Operación exitosa:", response);
-      onClose(); // Cierra el modal después de agregar
-    } catch (error) {
-      console.error("Error al realizar la operación:", error);
+    if (isMaterialValid) {
+      try {
+        const { Nombre_material, Cantidad, Estado } = materialData;
+        const response = await AddDevolucion(Nombre_material, Cantidad, Estado);
+        console.log("Operación exitosa:", response);
+        onClose(); // Cierra el modal después de agregar
+      } catch (error) {
+        console.error("Error al realizar la operación:", error);
+      }
+    } else {
+      console.error("Material no válido. Asegúrese de seleccionar un material autocompletado.");
     }
   };
 
@@ -42,14 +47,15 @@ const ModaltoAdd = ({ isOpen, onClose }) => {
     });
 
     if (name === "Nombre_material" && value.trim().length > 0) {
-      setFilteredMaterials(
-        materials.filter((material) =>
-          material.Nombre_material.toLowerCase().includes(value.toLowerCase())
-        )
+      const filtered = materials.filter((material) =>
+        material.Nombre_material.toLowerCase().includes(value.toLowerCase())
       );
+      setFilteredMaterials(filtered);
+      setIsMaterialValid(filtered.some(material => material.Nombre_material === value));
     } else {
       // Reset filtered materials if value is empty
       setFilteredMaterials([]);
+      setIsMaterialValid(false);
     }
   };
 
@@ -74,6 +80,7 @@ const ModaltoAdd = ({ isOpen, onClose }) => {
     }
 
     setFilteredMaterials([]); // Cierra la lista filtrada después de seleccionar un material
+    setIsMaterialValid(true);
   };
 
   if (!isOpen) return null;
@@ -93,7 +100,7 @@ const ModaltoAdd = ({ isOpen, onClose }) => {
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
-            {filteredMaterials && filteredMaterials.length > 0 && (
+            {filteredMaterials.length > 0 && (
               <ul className="mt-2 border border-gray-300 rounded-lg bg-white max-h-40 overflow-y-auto">
                 {filteredMaterials.map((material) => (
                   <li
@@ -151,7 +158,8 @@ const ModaltoAdd = ({ isOpen, onClose }) => {
             </button>
             <button
               type="submit"
-              className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className={`bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 ${!isMaterialValid ? 'opacity-50 cursor-not-allowed' : ''}`}
+              disabled={!isMaterialValid}
             >
               Agregar
             </button>

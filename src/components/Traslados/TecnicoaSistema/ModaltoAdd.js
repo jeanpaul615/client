@@ -13,6 +13,8 @@ const ModaltoAdd = ({ isOpen, onClose }) => {
   const [materials, setMaterials] = useState([]);
   const [filteredTechnicians, setFilteredTechnicians] = useState([]);
   const [filteredMaterials, setFilteredMaterials] = useState([]);
+  const [isMaterialValid, setIsMaterialValid] = useState(false);
+  const [isTechnicianValid, setIsTechnicianValid] = useState(false);
 
   useEffect(() => {
     const fetchTechniciansAndMaterials = async () => {
@@ -28,24 +30,27 @@ const ModaltoAdd = ({ isOpen, onClose }) => {
     fetchTechniciansAndMaterials();
   }, [materialData.Nombre_tecnico]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const { Nombre_material, Cantidad, Nombre_tecnico } = materialData;
-      const response = await SaveStockTecnico(Nombre_material, Cantidad, Nombre_tecnico);
-      console.log("Operación exitosa:", response);
-      onClose();
-    } catch (error) {
-      console.error("Error al realizar la operación:", error);
-    }
-  };
+  useEffect(() => {
+    // Validar el material
+    const validateMaterial = () => {
+      setIsMaterialValid(materials.some(material => material.Nombre_material.toLowerCase() === materialData.Nombre_material.toLowerCase()));
+    };
+
+    // Validar el técnico
+    const validateTechnician = () => {
+      setIsTechnicianValid(technicians.some(technician => technician.Nombre_tecnico.toLowerCase() === materialData.Nombre_tecnico.toLowerCase()));
+    };
+
+    validateMaterial();
+    validateTechnician();
+  }, [materialData.Nombre_material, materialData.Nombre_tecnico, materials, technicians]);
 
   const handleChange = async (e) => {
     const { name, value } = e.target;
-    setMaterialData({
-      ...materialData,
+    setMaterialData((prevState) => ({
+      ...prevState,
       [name]: value
-    });
+    }));
 
     if (name === "Nombre_tecnico") {
       const filteredTechs = technicians.filter((technician) =>
@@ -97,6 +102,18 @@ const ModaltoAdd = ({ isOpen, onClose }) => {
     setFilteredTechnicians([]);
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const { Nombre_material, Cantidad, Nombre_tecnico } = materialData;
+      const response = await SaveStockTecnico(Nombre_material, Cantidad, Nombre_tecnico);
+      console.log("Operación exitosa:", response);
+      onClose();
+    } catch (error) {
+      console.error("Error al realizar la operación:", error);
+    }
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -114,7 +131,7 @@ const ModaltoAdd = ({ isOpen, onClose }) => {
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
-            {filteredTechnicians && filteredTechnicians.length > 0 && (
+            {filteredTechnicians.length > 0 && (
               <ul className="mt-2 border border-gray-300 rounded-lg bg-white max-h-40 overflow-y-auto">
                 {filteredTechnicians.map((technician) => (
                   <li
@@ -138,7 +155,7 @@ const ModaltoAdd = ({ isOpen, onClose }) => {
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
-            {filteredMaterials && filteredMaterials.length > 0 && (
+            {filteredMaterials.length > 0 && (
               <ul className="mt-2 border border-gray-300 rounded-lg bg-white max-h-40 overflow-y-auto">
                 {filteredMaterials.map((material) => (
                   <li
@@ -158,10 +175,9 @@ const ModaltoAdd = ({ isOpen, onClose }) => {
               type="number"
               name="Stock"
               value={materialData.Stock}
-              onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
               readOnly
+              required
             />
           </div>
           <div className="mb-4">
@@ -185,7 +201,8 @@ const ModaltoAdd = ({ isOpen, onClose }) => {
             </button>
             <button
               type="submit"
-              className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className={`bg-blue-500 text-white px-4 py-2 rounded-lg ${!isMaterialValid || !isTechnicianValid ? 'bg-blue-300 cursor-not-allowed' : 'hover:bg-blue-600'} focus:outline-none focus:ring-2 focus:ring-blue-400`}
+              disabled={!isMaterialValid || !isTechnicianValid}
             >
               Agregar
             </button>

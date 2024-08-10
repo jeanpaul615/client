@@ -14,12 +14,14 @@ const ModaltoAdd = ({ isOpen, onClose }) => {
   const [materials, setMaterials] = useState([]);
   const [filteredTechnicians, setFilteredTechnicians] = useState([]);
   const [filteredMaterials, setFilteredMaterials] = useState([]);
+  const [isMaterialValid, setIsMaterialValid] = useState(false);
+  const [isTechnicianValid, setIsTechnicianValid] = useState(false);
 
   useEffect(() => {
     const fetchTechniciansAndMaterials = async () => {
       const techs = await getTechnicians(); // Filtrar técnicos activos
       setTechnicians(techs || []);
-
+      
       if (contractData.Nombre_tecnico) {
         const mats = await getMaterials(contractData.Nombre_tecnico); // Filtrar materiales que su cantidad es mayor a 0
         setMaterials(mats || []);
@@ -28,6 +30,21 @@ const ModaltoAdd = ({ isOpen, onClose }) => {
 
     fetchTechniciansAndMaterials();
   }, [contractData.Nombre_tecnico]);
+
+  useEffect(() => {
+    // Validar el material
+    const validateMaterial = () => {
+      setIsMaterialValid(materials.some(material => material.Nombre_material.toLowerCase() === contractData.Nombre_material.toLowerCase()));
+    };
+
+    // Validar el técnico
+    const validateTechnician = () => {
+      setIsTechnicianValid(technicians.some(technician => technician.Nombre_tecnico.toLowerCase() === contractData.Nombre_tecnico.toLowerCase()));
+    };
+
+    validateMaterial();
+    validateTechnician();
+  }, [contractData.Nombre_material, contractData.Nombre_tecnico, materials, technicians]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -187,7 +204,6 @@ const ModaltoAdd = ({ isOpen, onClose }) => {
               type="number"
               name="Stock"
               value={contractData.Stock}
-              onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               readOnly
               required
@@ -214,7 +230,8 @@ const ModaltoAdd = ({ isOpen, onClose }) => {
             </button>
             <button
               type="submit"
-              className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className={`bg-blue-500 text-white px-4 py-2 rounded-lg ${!isMaterialValid || !isTechnicianValid ? 'bg-blue-300 cursor-not-allowed' : 'hover:bg-blue-600'} focus:outline-none focus:ring-2 focus:ring-blue-400`}
+              disabled={!isMaterialValid || !isTechnicianValid}
             >
               Agregar
             </button>

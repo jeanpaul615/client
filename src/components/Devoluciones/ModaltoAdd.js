@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { AddDatatable, AddDevolucion } from "../../controllers/Devolver/Datatable";
 import { fetchStocks } from "../../controllers/StockSistema/Datatable";
-import {  getStockByMaterial } from "../../controllers/StockTechnique/addStock";
+import { getStockByMaterial } from "../../controllers/StockTechnique/addStock";
 
 const ModaltoAdd = ({ isOpen, onClose }) => {
   const [materialData, setMaterialData] = useState({
@@ -13,6 +13,7 @@ const ModaltoAdd = ({ isOpen, onClose }) => {
 
   const [materials, setMaterials] = useState([]);
   const [filteredMaterials, setFilteredMaterials] = useState([]);
+  const [isMaterialSelected, setIsMaterialSelected] = useState(false);
 
   useEffect(() => {
     const fetchTechniciansAndMaterials = async () => {
@@ -25,6 +26,10 @@ const ModaltoAdd = ({ isOpen, onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!isMaterialSelected) {
+      alert("Debe seleccionar un material válido.");
+      return;
+    }
     try {
       const { Nombre_material, Cantidad, Estado } = materialData;
       const response = await AddDevolucion(Nombre_material, Cantidad);
@@ -36,22 +41,24 @@ const ModaltoAdd = ({ isOpen, onClose }) => {
     }
   };
 
-  const handleChange = async (e) => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
     setMaterialData({
       ...materialData,
       [name]: value
     });
 
-    if (name === "Nombre_material" && value.trim().length > 0) {
-      setFilteredMaterials(
-        materials.filter((material) =>
-          material.Nombre_material.toLowerCase().includes(value.toLowerCase())
-        )
-      );
-    } else {
-      // Reset filtered materials if value is empty
-      setFilteredMaterials([]);
+    if (name === "Nombre_material") {
+      setIsMaterialSelected(false);
+      if (value.trim().length > 0) {
+        setFilteredMaterials(
+          materials.filter((material) =>
+            material.Nombre_material.toLowerCase().includes(value.toLowerCase())
+          )
+        );
+      } else {
+        setFilteredMaterials([]);
+      }
     }
   };
 
@@ -67,12 +74,14 @@ const ModaltoAdd = ({ isOpen, onClose }) => {
         ...prevData,
         Stock: stock
       }));
+      setIsMaterialSelected(true);
     } catch (error) {
       console.error("Error fetching stock by material:", error);
       setMaterialData((prevData) => ({
         ...prevData,
         Stock: 0 
       }));
+      setIsMaterialSelected(false);
     }
 
     setFilteredMaterials([]); // Cierra la lista filtrada después de seleccionar un material
@@ -153,7 +162,8 @@ const ModaltoAdd = ({ isOpen, onClose }) => {
             </button>
             <button
               type="submit"
-              className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className={`px-4 py-2 rounded-lg text-white ${isMaterialSelected ? "bg-blue-500 hover:bg-blue-600 focus:ring-2 focus:ring-blue-400" : "bg-gray-400 cursor-not-allowed"}`}
+              disabled={!isMaterialSelected}
             >
               Agregar
             </button>

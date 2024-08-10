@@ -2,7 +2,7 @@ import Swal from 'sweetalert2';
 import React, { useState, useEffect } from "react";
 import { getMaterials } from "../../../controllers/StockTechnique/addStock";
 import { SaveTraslado } from "../../../controllers/Traslado/SaveTraslado";
-import {  getStockByMaterial } from "../../../controllers/StockTechnique/addStock";
+import { getStockByMaterial } from "../../../controllers/StockTechnique/addStock";
 
 const ModaltoAdd = ({ isOpen, onClose }) => {
   const [materialData, setMaterialData] = useState({
@@ -15,16 +15,29 @@ const ModaltoAdd = ({ isOpen, onClose }) => {
 
   const [materials, setMaterials] = useState([]);
   const [filteredMaterials, setFilteredMaterials] = useState([]);
+  const [isMaterialValid, setIsMaterialValid] = useState(false);
 
   useEffect(() => {
     const fetchMaterials = async () => {
-      const mats = await getMaterials();
-      const filteredMats = mats.filter(material => material.Cantidad > 0);
-      setMaterials(filteredMats || []);
+      try {
+        const mats = await getMaterials();
+        const filteredMats = mats.filter(material => material.Cantidad > 0);
+        setMaterials(filteredMats || []);
+      } catch (error) {
+        console.error("Error fetching materials:", error);
+      }
     };
 
     fetchMaterials();
   }, []);
+
+  useEffect(() => {
+    const validateMaterial = () => {
+      setIsMaterialValid(materials.some(material => material.Nombre_material.toLowerCase() === materialData.Nombre_material.toLowerCase()));
+    };
+
+    validateMaterial();
+  }, [materialData.Nombre_material, materials]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -35,6 +48,15 @@ const ModaltoAdd = ({ isOpen, onClose }) => {
         icon: 'error',
         title: 'Error',
         text: 'La sede de origen y destino no pueden ser la misma.',
+      });
+      return;
+    }
+
+    if (!isMaterialValid) {
+      await Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Material no válido. Asegúrate de seleccionar un material correcto.',
       });
       return;
     }
@@ -82,13 +104,12 @@ const ModaltoAdd = ({ isOpen, onClose }) => {
       console.error("Error fetching stock by material:", error);
       setMaterialData((prevData) => ({
         ...prevData,
-        Stock: 0 
+        Stock: 0
       }));
     }
 
     setFilteredMaterials([]); // Cierra la lista filtrada después de seleccionar un material
   };
-  
 
   if (!isOpen) return null;
 
@@ -137,7 +158,7 @@ const ModaltoAdd = ({ isOpen, onClose }) => {
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
-            {filteredMaterials && filteredMaterials.length > 0 && (
+            {filteredMaterials.length > 0 && (
               <ul className="mt-2 border border-gray-300 rounded-lg bg-white max-h-40 overflow-y-auto">
                 {filteredMaterials.map((material) => (
                   <li
@@ -157,7 +178,6 @@ const ModaltoAdd = ({ isOpen, onClose }) => {
               type="number"
               name="Stock"
               value={materialData.Stock}
-              onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
               readOnly
@@ -184,7 +204,8 @@ const ModaltoAdd = ({ isOpen, onClose }) => {
             </button>
             <button
               type="submit"
-              className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className={`bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 ${!isMaterialValid ? 'opacity-50 cursor-not-allowed' : ''}`}
+              disabled={!isMaterialValid}
             >
               Agregar
             </button>
