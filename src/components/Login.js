@@ -14,6 +14,10 @@ export default function Login() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+  const handleForgotPassword = () => {
+    window.location.href = "mailto:Salazarjean2003@gmail.com?subject=Recuperación de Contraseña";
+  };
+
   const handleLogin = async (e) => {
     e.preventDefault();
     const data = {
@@ -112,7 +116,7 @@ export default function Login() {
                 </label>
               </div>
 
-              <div className="text-sm">
+              <div onClick={handleForgotPassword} className="text-sm">
                 <a href="/" className="font-medium text-yellow-600 hover:text-yellow-500">
                   ¿Olvidaste tu contraseña?
                 </a>
