@@ -2,7 +2,7 @@ import axios from "axios";
 export const fetchDevolver = async () => {
   try {
     const response = await axios.get(
-      "http://3.131.237.43/devolver/get-devolver"
+      "http://3.129.48.12/devolver/get-devolver"
     );
     return response.data; // Retorna los datos recibidos desde la API
   } catch (error) {
@@ -14,7 +14,7 @@ export const fetchDevolver = async () => {
 export const AddDevolucion = async (Nombre_material, Cantidad) => {
   try {
     const responseStockSistema = await axios.post(
-      "http://3.131.237.43/stock/update-stockbytecnico",
+      "http://3.129.48.12/stock/update-stockbytecnico",
       {
         Nombre_material,
         Cantidad,
@@ -33,7 +33,7 @@ export const AddDevolucion = async (Nombre_material, Cantidad) => {
 export const AddDatatable = async (Nombre_material, Cantidad, Estado) => {
   try {
     const response = await axios.post(
-      "http://3.131.237.43/devolver/add-devolver",
+      "http://3.129.48.12/devolver/add-devolver",
       {
         Nombre_material,
         Cantidad,

@@ -29,9 +29,6 @@ export default function App() {
         <Route exact path='/tecnicoasistema' element={<ProtectedRoute element={TecnicoaSistemaTable} />} />
         <Route exact path='/devoluciones' element={<ProtectedRoute element={DevolucionTable} />} />
         <Route exact path='/factura' element={<ProtectedRoute element={SalesCheckTable} />} />
-
-
-
       </Routes>
     </Router>
   );
