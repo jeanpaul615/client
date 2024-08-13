@@ -22,7 +22,7 @@ export const SaveTraslado = async (Sede_origen, Sede_destino, Nombre_material, C
     let responseStockSistema;
 
     // Lógica condicional para decidir qué API utilizar según la sede de origen
-    if (Sede_origen === 'Molivento') {
+    if (Sede_origen === 'Frailes') {
       // Si la sede_origen es Molivento, usar la API update-stockbydevolucion
       const formDataStockSistema = {
         Nombre_material,
@@ -35,7 +35,7 @@ export const SaveTraslado = async (Sede_origen, Sede_destino, Nombre_material, C
           'Content-Type': 'application/x-www-form-urlencoded'
         }
       });
-    } else if (Sede_origen === 'Frailes') {
+    } else if (Sede_origen === 'Molivento') {
       // Si la sede_origen es Frailes, usar la API update-stockbytecnico
       const formDataStockSistema = {
         Nombre_material,
