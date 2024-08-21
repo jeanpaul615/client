@@ -12,7 +12,6 @@ const ModaltoAdd = ({ isOpen, onClose }) => {
 
   const [materials, setMaterials] = useState([]);
   const [filteredMaterials, setFilteredMaterials] = useState([]);
-  const [isMaterialValid, setIsMaterialValid] = useState(false);
 
   useEffect(() => {
     const fetchMaterials = async () => {
@@ -25,17 +24,22 @@ const ModaltoAdd = ({ isOpen, onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (isMaterialValid) {
-      try {
-        const { Nombre_material, Cantidad, Estado } = materialData;
-        const response = await AddDevolucion(Nombre_material, Cantidad, Estado);
-        console.log("Operación exitosa:", response);
-        onClose(); // Cierra el modal después de agregar
-      } catch (error) {
-        console.error("Error al realizar la operación:", error);
-      }
-    } else {
-      console.error("Material no válido. Asegúrese de seleccionar un material autocompletado.");
+    try {
+      const { Nombre_material, Cantidad, Estado } = materialData;
+      const response = await AddDevolucion(Nombre_material, Cantidad, Estado);
+      console.log("Operación exitosa:", response);
+
+      // Resetear los datos del formulario después de agregar
+      setMaterialData({
+        Nombre_material: "",
+        Stock: 0,
+        Cantidad: 0,
+        Estado: ""
+      });
+
+      onClose(); // Cierra el modal después de agregar
+    } catch (error) {
+      console.error("Error al realizar la operación:", error);
     }
   };
 
@@ -51,11 +55,9 @@ const ModaltoAdd = ({ isOpen, onClose }) => {
         material.Nombre_material.toLowerCase().includes(value.toLowerCase())
       );
       setFilteredMaterials(filtered);
-      setIsMaterialValid(filtered.some(material => material.Nombre_material === value));
     } else {
       // Reset filtered materials if value is empty
       setFilteredMaterials([]);
-      setIsMaterialValid(false);
     }
   };
 
@@ -80,7 +82,6 @@ const ModaltoAdd = ({ isOpen, onClose }) => {
     }
 
     setFilteredMaterials([]); // Cierra la lista filtrada después de seleccionar un material
-    setIsMaterialValid(true);
   };
 
   if (!isOpen) return null;
@@ -158,8 +159,7 @@ const ModaltoAdd = ({ isOpen, onClose }) => {
             </button>
             <button
               type="submit"
-              className={`bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 ${!isMaterialValid ? 'opacity-50 cursor-not-allowed' : ''}`}
-              disabled={!isMaterialValid}
+              className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
             >
               Agregar
             </button>
