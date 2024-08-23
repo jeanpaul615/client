@@ -26,7 +26,7 @@ export default function Login() {
     };
 
     try {
-      const response = await axios.post("http://3.129.48.12/login", data, {
+      const response = await axios.post("http://3.136.228.49:8001/login", data, {
         headers: {
           "Content-Type": "application/json",
         },

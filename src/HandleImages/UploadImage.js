@@ -32,7 +32,7 @@ function UploadImage({ nombreMaterialProp }) {
     formData.append('nombreMaterial', nombreMaterial);
 
     try {
-      const response = await axios.post('http://3.129.48.12/upload', formData, {
+      const response = await axios.post('http://3.136.228.49:8001/upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

@@ -13,7 +13,7 @@ export const SaveStockTecnico = async (Id_stocktecnico, Nombre_material, Cantida
     };
 
     // Guardar en stocktecnico usando x-www-form-urlencoded
-    const responseStockTecnico = await axios.post('http://3.129.48.12/stocktechnique/add-stocktechnique', qs.stringify(formDataStockTecnico), {
+    const responseStockTecnico = await axios.post('http://3.136.228.49:8001/stocktechnique/add-stocktechnique', qs.stringify(formDataStockTecnico), {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
       }
@@ -26,7 +26,7 @@ export const SaveStockTecnico = async (Id_stocktecnico, Nombre_material, Cantida
     };
 
     // Actualizar stocksistema usando x-www-form-urlencoded
-    const responseStockSistema = await axios.post('http://3.129.48.12/stock/update-stockbytecnico', qs.stringify(formDataStockSistema), {
+    const responseStockSistema = await axios.post('http://3.136.228.49:8001/stock/update-stockbytecnico', qs.stringify(formDataStockSistema), {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
       }
